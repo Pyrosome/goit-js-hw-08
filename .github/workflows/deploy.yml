@@ -1,22 +1,21 @@
-name: Build and deploy to GitHub Pages
-
+name: Deploy Code to Release Branch
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  build:
+    name: Push to Release Branch
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v2.3.1
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Install and Build 🔧
-        run: |
-          npm ci
-          npm run build
+      # Workflow dispatch event that pushes the current version to the release branch.
+      # From here the secondary production deployment workflow will trigger to build the dependencies.
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@4
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages
-          folder: dist
+          branch: releases/v4
+          folder: .
+          clean: false
+          single-commit: true
